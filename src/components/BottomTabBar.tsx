@@ -2,14 +2,17 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { DESIGN } from '../theme/designSystem';
 
-type TabProps = { active: string; navigation: (screen: any) => void };
+interface BottomTabBarProps {
+  active: string;
+  navigation: (screen: string) => void;
+}
 
-export default function BottomTabBar({ active, navigation }: TabProps) {
+export default function BottomTabBar({ active, navigation }: BottomTabBarProps) {
   const tabs = [
     { id: 'HOME', label: 'Home' },
     { id: 'CAMERA', label: 'Scan' },
     { id: 'FEED', label: 'Feed' },
-    { id: 'LOGIN', label: 'Me' },
+    { id: 'ME', label: 'Me' },
   ];
 
   return (
@@ -28,9 +31,9 @@ export default function BottomTabBar({ active, navigation }: TabProps) {
 }
 
 const styles = StyleSheet.create({
-  tabContainer: { flexDirection: 'row', height: 75, backgroundColor: DESIGN.colors.bgWhite, borderTopWidth: 1, borderTopColor: DESIGN.colors.borderLight, justifyContent: 'space-around', alignItems: 'center', paddingBottom: 10 },
-  tabButton: { alignItems: 'center', justifyContent: 'center' },
-  dot: { width: 4, height: 4, borderRadius: 2, marginBottom: 6 },
-  tabLabel: { fontSize: 11, color: DESIGN.colors.textMuted, fontWeight: '500' },
-  tabLabelActive: { color: DESIGN.colors.textDark, fontWeight: '700' },
+  tabContainer: { flexDirection: 'row', height: 70, backgroundColor: '#FFF', borderTopWidth: 1, borderTopColor: DESIGN.colors.borderLight, justifyContent: 'space-around', alignItems: 'center', paddingBottom: 10 },
+  tabButton: { alignItems: 'center' },
+  dot: { width: 4, height: 4, borderRadius: 2, marginBottom: 4 },
+  tabLabel: { fontSize: 11, color: DESIGN.colors.textMuted },
+  tabLabelActive: { color: DESIGN.colors.textDark, fontWeight: '700' }
 });

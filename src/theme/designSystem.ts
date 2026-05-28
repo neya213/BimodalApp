@@ -8,8 +8,5 @@ export const DESIGN = {
     borderLight: '#EBEFF5',
     darkCanvas: '#0A0E1A',
     grayFill: '#F4F6F9',
-  },
-  fonts: {
-    mono: 'Platform', // Fallbacks handled natively via monospace configurations
   }
 };
