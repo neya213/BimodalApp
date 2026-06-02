@@ -1,99 +1,119 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { DESIGN } from '../theme/designSystem';
 
-export default function DeepBrainScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Direct prototype path into choice metrics
-      onNavigate('AUTHENTIC');
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+interface DeepBrainScreenProps {
+  onNavigate: (screenName: string) => void;
+}
 
+export default function DeepBrainScreen({ onNavigate }: DeepBrainScreenProps) {
   return (
-    <ScrollView style={styles.view} showsVerticalScrollIndicator={false}>
-      <View style={styles.topBar}>
-        <Text style={styles.cancelLink}>‹ Cancel</Text>
-        <Text style={styles.centerLogo}>BIMODAL</Text>
-        <Text style={styles.statusDot}>• ANALYSING</Text>
+    <ScrollView style={styles.masterScrollContainer} showsVerticalScrollIndicator={false}>
+      <View style={styles.headerRowWhite}>
+        <TouchableOpacity onPress={() => onNavigate('HOME')}>
+          <Text style={styles.navActionTextMuted}>‹ Cancel</Text>
+        </TouchableOpacity>
+        <Text style={styles.brandTitleDark}>BIMODAL</Text>
+        <Text style={styles.statusPulseText}>• ANALYSING</Text>
       </View>
 
-      <Text style={styles.cascadeSub}>CASCADE GATE</Text>
-      <Text style={styles.headline}>Below 0.80 — consulting the <Text style={{ color: DESIGN.colors.coral }}>Deep Brain.</Text></Text>
+      <View style={styles.paddedContent}>
+        <Text style={styles.metaSectionLabel}>CASCADE GATE</Text>
+        <Text style={styles.processingMainHeadline}>
+          Below 0.80 — consulting the <Text style={{ color: DESIGN.colors.coral }}>Deep Brain</Text>.
+        </Text>
 
-      <View style={styles.nodeItem}>
-        <View style={styles.stepCircle}><Text style={styles.stepNum}>01</Text></View>
-        <View style={styles.nodeBody}>
-          <Text style={styles.nodeTitle}>Fast Brain</Text>
-          <Text style={styles.nodeMeta}>ON-DEVICE · YOLOV11-NANO · INT8</Text>
+        <View style={styles.pipelineNodeRow}>
+          <View style={[styles.nodeIconCircle, { backgroundColor: DESIGN.colors.navy }]}>
+            <Text style={styles.nodeIconNumber}>01</Text>
+          </View>
+          <View style={styles.nodeMetaBlock}>
+            <Text style={styles.nodeTitleText}>Fast Brain</Text>
+            <Text style={styles.nodeSubtext}>ON-DEVICE • YOLOv11-NANO INT8</Text>
+          </View>
+          <View style={styles.nodeValueBlock}>
+            <Text style={styles.nodeValueMain}>0.62</Text>
+            <Text style={styles.nodeValueSub}>184 MS</Text>
+          </View>
         </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text style={styles.nodeMetric}>0.62</Text>
-          <Text style={styles.nodeMetricSub}>184 MS</Text>
+
+        <View style={styles.pipelineNodeRow}>
+          <View style={[styles.nodeIconCircle, { backgroundColor: DESIGN.colors.coral }]}>
+            <Text style={styles.nodeIconNumber}>02</Text>
+          </View>
+          <View style={styles.nodeMetaBlock}>
+            <Text style={styles.nodeTitleText}>Deep Brain</Text>
+            <Text style={styles.nodeSubtext}>CLOUD • VISUAL + AUDIO SYNC</Text>
+          </View>
+          <View style={styles.nodeValueBlock}>
+            <Text style={[styles.nodeValueMain, { color: DESIGN.colors.coral }]}>---</Text>
+            <Text style={styles.nodeValueSub}>LAG</Text>
+          </View>
         </View>
+
+        <View style={styles.progressBarSection}>
+          <View style={styles.progressBarHeaderRow}>
+            <Text style={styles.progressLabelText}>UPLOAD</Text>
+            <Text style={styles.progressValueText}>2.1 / 2.4 MB</Text>
+          </View>
+          <View style={styles.trackBackground}>
+            <View style={[styles.filledTrackProgress, { width: '85%', backgroundColor: DESIGN.colors.navy }]} />
+          </View>
+          <Text style={styles.progressFooterMeta}>TLS 1.3 • PINNED — 2 OF 3 METRICS</Text>
+        </View>
+
+        <Text style={[styles.metaSectionLabel, { marginTop: 32, marginBottom: 8 }]}>RUNNING</Text>
+        
+        <View style={styles.metricRowEntry}>
+          <Text style={styles.metricEntryLabel}>Per-frame visual artefacts</Text>
+          <Text style={styles.metricEntryValue}>78%</Text>
+        </View>
+
+        <View style={styles.metricRowEntry}>
+          <Text style={styles.metricEntryLabel}>Lip / phoneme alignment</Text>
+          <Text style={styles.metricEntryValue}>41%</Text>
+        </View>
+
+        <View style={[styles.metricRowEntry, { borderBottomWidth: 0 }]}>
+          <Text style={styles.metricEntryLabel}>Fusion verdict</Text>
+          <Text style={[styles.metricEntryValue, { color: DESIGN.colors.textMuted }]}>QUEUE</Text>
+        </View>
+
+        <Text style={styles.disclaimerTextFooter}>
+          CLIP NEVER LEAVES THE DEVICE BEYOND THIS POINT UNLESS YOU TAP "CONTINUE".
+        </Text>
       </View>
-
-      <View style={styles.connectionLine} />
-
-      <View style={styles.nodeItem}>
-        <View style={[styles.stepCircle, { backgroundColor: DESIGN.colors.coral }]}><Text style={styles.stepNum}>02</Text></View>
-        <View style={styles.nodeBody}>
-          <Text style={styles.nodeTitle}>Deep Brain</Text>
-          <Text style={styles.nodeMeta}>CLOUD · VISUAL + AUDIO SYNC</Text>
-        </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text style={[styles.nodeMetric, { color: DESIGN.colors.coral }]}>---</Text>
-          <Text style={styles.nodeMetricSub}>+ 4 S</Text>
-        </View>
-      </View>
-
-      <View style={styles.uploadBlock}>
-        <View style={styles.progressTextRow}>
-          <Text style={styles.uploadLabel}>UPLOAD</Text>
-          <Text style={styles.uploadValue}>2.4 / 2.4 MB</Text>
-        </View>
-        <View style={styles.barBackground}><View style={styles.barFill} /></View>
-        <Text style={styles.secureEncryption}>TLS 1.3 · PINNED · 0 OF 3 RETRIES</Text>
-      </View>
-
-      <Text style={styles.sectionLabel}>RUNNING</Text>
-      <View style={styles.statRow}><Text style={styles.statName}>Per-frame visual artefacts</Text><Text style={styles.statVal}>78%</Text></View>
-      <View style={styles.statRow}><Text style={styles.statName}>Lip / phoneme alignment</Text><Text style={styles.statVal}>41%</Text></View>
-      <View style={styles.statRow}><Text style={styles.statName}>Fusion verdict</Text><Text style={[styles.statVal, { color: DESIGN.colors.textMuted }]}>queued</Text></View>
-
-      <Text style={styles.noticeText}>CLIP NEVER LEAVES THE DEVICE BEYOND THIS POINT UNLESS YOU TAP "CONTINUE".</Text>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  view: { flex: 1, backgroundColor: DESIGN.colors.bgWhite, paddingHorizontal: 24, paddingTop: 50 },
-  topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 26 },
-  cancelLink: { color: DESIGN.colors.textMuted, fontSize: 13 },
-  centerLogo: { color: DESIGN.colors.navy, fontSize: 13, fontWeight: '800', letterSpacing: 4 },
-  statusDot: { color: DESIGN.colors.coral, fontSize: 9, fontWeight: '700' },
-  cascadeSub: { color: DESIGN.colors.textMuted, fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
-  headline: { fontSize: 24, fontWeight: '700', color: DESIGN.colors.textDark, marginTop: 6, marginBottom: 30 },
-  nodeItem: { flexDirection: 'row', alignItems: 'center' },
-  stepCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: DESIGN.colors.navy, alignItems: 'center', justifyContent: 'center' },
-  stepNum: { color: '#FFF', fontSize: 11, fontWeight: '700' },
-  nodeBody: { flex: 1, paddingLeft: 14 },
-  nodeTitle: { fontSize: 15, fontWeight: '700', color: DESIGN.colors.textDark },
-  nodeMeta: { fontSize: 9, color: DESIGN.colors.textMuted, marginTop: 2, fontFamily: 'monospace' },
-  nodeMetric: { fontSize: 16, fontWeight: '700', fontFamily: 'monospace', color: DESIGN.colors.textDark },
-  nodeMetricSub: { fontSize: 9, color: DESIGN.colors.textMuted, fontFamily: 'monospace' },
-  connectionLine: { width: 1, height: 24, backgroundColor: DESIGN.colors.borderLight, marginLeft: 13, marginVertical: 4 },
-  uploadBlock: { marginVertical: 26, paddingVertical: 16, borderTopWidth: 1, borderBottomWidth: 1, borderColor: DESIGN.colors.borderLight },
-  progressTextRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
-  uploadLabel: { fontSize: 10, fontWeight: '700', color: DESIGN.colors.textMuted },
-  uploadValue: { fontSize: 11, fontWeight: '700', color: DESIGN.colors.textDark, fontFamily: 'monospace' },
-  barBackground: { height: 2, backgroundColor: DESIGN.colors.grayFill },
-  barFill: { height: 2, backgroundColor: DESIGN.colors.navy, width: '100%' },
-  secureEncryption: { fontSize: 9, color: DESIGN.colors.textMuted, fontFamily: 'monospace', marginTop: 8 },
-  sectionLabel: { color: DESIGN.colors.textMuted, fontSize: 10, fontWeight: '700', letterSpacing: 0.5, marginBottom: 4 },
-  statRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: DESIGN.colors.borderLight },
-  statName: { fontSize: 13, color: DESIGN.colors.textDark },
-  statVal: { fontSize: 13, fontWeight: '600', fontFamily: 'monospace' },
-  noticeText: { fontSize: 10, color: DESIGN.colors.textMuted, textAlign: 'center', marginVertical: 30, lineHeight: 14 }
+  masterScrollContainer: { flex: 1, backgroundColor: '#FFF' },
+  paddedContent: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: 40 },
+  headerRowWhite: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 24, paddingTop: 60, paddingBottom: 20, backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#F4F6F9' },
+  navActionTextMuted: { color: DESIGN.colors.textMuted, fontSize: 14, fontWeight: '600' },
+  brandTitleDark: { color: '#121212', fontSize: 13, fontWeight: '800', letterSpacing: 4 },
+  statusPulseText: { color: DESIGN.colors.coral, fontSize: 10, fontWeight: '700', letterSpacing: 1 },
+  metaSectionLabel: { color: DESIGN.colors.textMuted, fontSize: 10, fontWeight: '700', letterSpacing: 1 },
+  processingMainHeadline: { fontSize: 24, fontWeight: '700', color: DESIGN.colors.light.text, lineHeight: 32, marginTop: 12, marginBottom: 32 },
+  pipelineNodeRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#F4F6F9' },
+  nodeIconCircle: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginRight: 16 },
+  nodeIconNumber: { color: '#FFF', fontSize: 12, fontWeight: '700' },
+  nodeMetaBlock: { flex: 1 },
+  nodeTitleText: { fontSize: 16, fontWeight: '700', color: DESIGN.colors.light.text },
+  nodeSubtext: { fontSize: 9, color: DESIGN.colors.textMuted, fontWeight: '600', marginTop: 4, letterSpacing: 0.5 },
+  nodeValueBlock: { alignItems: 'flex-end' },
+  nodeValueMain: { fontSize: 18, fontWeight: '700', color: DESIGN.colors.light.text, fontFamily: 'monospace' },
+  nodeValueSub: { fontSize: 9, color: DESIGN.colors.textMuted, fontWeight: '700', marginTop: 2 },
+  progressBarSection: { marginTop: 32 },
+  progressBarHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  progressLabelText: { fontSize: 10, fontWeight: '700', color: DESIGN.colors.light.text, letterSpacing: 0.5 },
+  progressValueText: { fontSize: 11, fontWeight: '700', color: DESIGN.colors.light.text, fontFamily: 'monospace' },
+  trackBackground: { height: 4, backgroundColor: '#F4F6F9', borderRadius: 2, width: '100%', overflow: 'hidden' },
+  filledTrackProgress: { height: '100%', borderRadius: 2 },
+  progressFooterMeta: { fontSize: 9, color: DESIGN.colors.textMuted, fontWeight: '600', marginTop: 8, letterSpacing: 0.5 },
+  metricRowEntry: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F4F6F9' },
+  metricEntryLabel: { fontSize: 14, color: DESIGN.colors.light.text, fontWeight: '500' },
+  metricEntryValue: { fontSize: 14, fontWeight: '700', color: DESIGN.colors.light.text, fontFamily: 'monospace' },
+  disclaimerTextFooter: { color: DESIGN.colors.textMuted, fontSize: 9, fontWeight: '600', textAlign: 'center', marginTop: 48, lineHeight: 16, letterSpacing: 0.5 }
 });

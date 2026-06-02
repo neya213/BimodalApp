@@ -44,12 +44,12 @@ export default function MeProfileScreen({ onNavigateSub }: MeProfileProps) {
           <Text style={styles.metricSubLabel}>SCANS</Text>
         </View>
         <View style={styles.metricItemBlock}>
-          <Text style={[styles.metricSectionLabel, { color: DESIGN.colors.coral }]}>37</Text>
+          <Text style={[styles.metricSectionLabel, { color: DESIGN.colors.coral }]}>RISK</Text>
           <Text style={[styles.metricNumberDisplay, { color: DESIGN.colors.coral }]}>37</Text>
           <Text style={styles.metricSubLabel}>FLAGGED</Text>
         </View>
         <View style={styles.metricItemBlock}>
-          <Text style={styles.metricSectionLabel}>211</Text>
+          <Text style={styles.metricSectionLabel}>LATENCY</Text>
           <Text style={styles.metricNumberDisplay}>211</Text>
           <Text style={styles.metricSubLabel}>MS AVG</Text>
         </View>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   statsMetricsRow: { flexDirection: 'row', backgroundColor: '#FFF', paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: '#EBEFF5' },
   metricItemBlock: { flex: 1, alignItems: 'center', borderRightWidth: 1, borderRightColor: '#EBEFF5' },
   metricSectionLabel: { color: DESIGN.colors.textMuted, fontSize: 10, fontWeight: '700', letterSpacing: 0.5, marginBottom: 4 },
-  metricNumberDisplay: { fontSize: 24, fontWeight: '700', color: DESIGN.colors.textDark, fontFamily: 'monospace' },
+  metricNumberDisplay: { fontSize: 24, fontWeight: '700', color: DESIGN.colors.light.text, fontFamily: 'monospace' },
   metricSubLabel: { color: DESIGN.colors.textMuted, fontSize: 8, fontWeight: '600', marginTop: 2, letterSpacing: 0.5 },
   sectionHeaderLine: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 16 },
   sectionHeaderTitle: { color: DESIGN.colors.textMuted, fontSize: 10, fontWeight: '700', letterSpacing: 1 },
@@ -113,10 +113,10 @@ const styles = StyleSheet.create({
   activityItemRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F4F6F9' },
   activityLeftData: { flexDirection: 'row', alignItems: 'center' },
   statusIndicatorDot: { width: 6, height: 6, borderRadius: 3, marginRight: 14 },
-  activityRecordTitle: { fontSize: 14, fontWeight: '600', color: DESIGN.colors.textDark },
+  activityRecordTitle: { fontSize: 14, fontWeight: '600', color: DESIGN.colors.light.text },
   activityRecordMeta: { fontSize: 11, color: DESIGN.colors.textMuted, marginTop: 3 },
   activityTimestamp: { fontSize: 11, color: DESIGN.colors.textMuted, fontFamily: 'monospace' },
   listItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: DESIGN.colors.borderLight },
-  listTitle: { fontSize: 15, fontWeight: '600', color: DESIGN.colors.textDark },
+  listTitle: { fontSize: 15, fontWeight: '600', color: DESIGN.colors.light.text },
   chevron: { color: DESIGN.colors.textMuted, fontSize: 16 }
 });

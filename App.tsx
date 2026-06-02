@@ -1,33 +1,31 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, SafeAreaView, StatusBar } from 'react-native';
 
-// Import Modular Components
 import BottomTabBar from './src/components/BottomTabBar';
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import UploadVideoScreen from './src/screens/UploadVideoScreen';
 import ThreatFeedScreen from './src/screens/ThreatFeedScreen';
-import MeProfileScreen from './src/screens/ProfileScreen';
-import MeSettingsScreen from './src/screens/SettingsScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 
-// Fallback stubs for remaining intermediate processing workflows
-const DeepBrainScreen = ({ onNavigate }: any) => <View />;
-const AuthenticScreen = ({ onNavigate }: any) => <View />;
-const DeepfakeScreen = ({ onNavigate }: any) => <View />;
+import DeepBrainScreen from './src/screens/DeepBrainScreen';
+import AuthenticScreen from './src/screens/AuthenticScreen';
+import DeepfakeScreen from './src/screens/DeepfakeScreen';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<string>('LOGIN');
   const [meSubScreen, setMeSubScreen] = useState<'PROFILE' | 'SETTINGS'>('PROFILE');
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true); // Default starting configuration
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  const displayNav = currentScreen !== 'LOGIN' && currentScreen !== 'UPLOAD';
-  const lightStatusBar = currentScreen === 'LOGIN' || isDarkMode;
+  const displayNav = currentScreen !== 'LOGIN' && currentScreen !== 'UPLOAD' && currentScreen !== 'DEEPBRAIN';
+  const lightStatusBar = currentScreen === 'LOGIN' || isDarkMode || currentScreen === 'AUTHENTIC' || currentScreen === 'DEEPFAKE';
 
   const handleNavigation = (screenName: string) => {
     if (screenName === 'ME') {
-      setMeSubScreen('PROFILE'); 
+      setMeSubScreen('PROFILE');
     }
     setCurrentScreen(screenName);
   };
@@ -39,7 +37,7 @@ export default function App() {
         {currentScreen === 'LOGIN' && (
           <LoginScreen onNavigate={handleNavigation} isDarkMode={isDarkMode} />
         )}
-        
+
         {currentScreen === 'HOME' && (
           <HomeScreen 
             onNavigate={handleNavigation} 
@@ -47,7 +45,7 @@ export default function App() {
             toggleTheme={toggleTheme} 
           />
         )}
-        
+
         {currentScreen === 'UPLOAD' && (
           <UploadVideoScreen 
             onNavigate={handleNavigation} 
@@ -55,24 +53,38 @@ export default function App() {
             toggleTheme={toggleTheme} 
           />
         )}
-        
-        {currentScreen === 'DEEP_BRAIN' && <DeepBrainScreen onNavigate={handleNavigation} />}
-        {currentScreen === 'AUTHENTIC' && <AuthenticScreen onNavigate={handleNavigation} />}
-        {currentScreen === 'DEEPFAKE' && <DeepfakeScreen onNavigate={handleNavigation} />}
-        
-        {currentScreen === 'FEED' && (
-          <ThreatFeedScreen onNavigate={handleNavigation} isDarkMode={isDarkMode} />
+
+        {currentScreen === 'DEEPBRAIN' && (
+          <DeepBrainScreen onNavigate={handleNavigation} />
         )}
-        
-        {currentScreen === 'ME' && (
-          meSubScreen === 'PROFILE' ? (
-            <MeProfileScreen onNavigateSub={setMeSubScreen} />
-          ) : (
-            <MeSettingsScreen onNavigateSub={setMeSubScreen} />
-          )
+
+        {currentScreen === 'AUTHENTIC' && (
+          <AuthenticScreen onNavigate={handleNavigation} />
+        )}
+
+        {currentScreen === 'DEEPFAKE' && (
+          <DeepfakeScreen onNavigate={handleNavigation} />
+        )}
+
+        {currentScreen === 'THREATS' && (
+          <ThreatFeedScreen 
+            onNavigate={handleNavigation} 
+            isDarkMode={isDarkMode} 
+          />
+        )}
+
+        {currentScreen === 'ME' && meSubScreen === 'PROFILE' && (
+          <ProfileScreen onNavigateSub={(target) => target === 'SETTINGS' ? setMeSubScreen('SETTINGS') : handleNavigation('ME')} />
+        )}
+
+        {currentScreen === 'ME' && meSubScreen === 'SETTINGS' && (
+          <SettingsScreen onNavigateSub={() => setMeSubScreen('PROFILE')} />
         )}
       </View>
-      {displayNav && <BottomTabBar active={currentScreen} navigation={handleNavigation} />}
+
+      {displayNav && (
+        <BottomTabBar active={currentScreen} navigation={handleNavigation} />
+      )}
     </SafeAreaView>
   );
 }

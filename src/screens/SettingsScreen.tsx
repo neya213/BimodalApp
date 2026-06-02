@@ -94,10 +94,10 @@ export default function MeSettingsScreen({ onNavigateSub }: MeSettingsProps) {
 const styles = StyleSheet.create({
   masterScrollContainer: { flex: 1, backgroundColor: '#F9FAFC' },
   settingsFixedHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 24, paddingTop: 50, paddingBottom: 15, backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#EBEFF5' },
-  cancelTextAction: { color: DESIGN.colors.textDark, fontSize: 14, fontWeight: '600' },
+  cancelTextAction: { color: DESIGN.colors.dark.text, fontSize: 14, fontWeight: '600' },
   brandTitleTextDark: { color: DESIGN.colors.navy, fontSize: 12, fontWeight: '800', letterSpacing: 4 },
   settingsSectionHeadingTag: { color: DESIGN.colors.coral, fontSize: 10, fontWeight: '700', letterSpacing: 1, marginTop: 15 },
-  headline: { fontSize: 26, fontWeight: '700', color: DESIGN.colors.textDark, marginTop: 6, marginBottom: 25 },
+  headline: { fontSize: 26, fontWeight: '700', color: DESIGN.colors.dark.text, marginTop: 6, marginBottom: 25 },
   miniProfileWidget: { flexDirection: 'row', alignItems: 'center', backgroundColor: DESIGN.colors.navy, padding: 16, borderRadius: 14, marginBottom: 25 },
   avatarCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center' },
   avatarInitials: { color: '#FFF', fontSize: 14, fontWeight: '700' },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   settingsInputGroupingTag: { color: DESIGN.colors.textMuted, fontSize: 10, fontWeight: '700', letterSpacing: 1, marginBottom: 8, marginTop: 5 },
   settingsOptionsCardGrid: { backgroundColor: '#FFF', borderRadius: 14, paddingHorizontal: 16, borderWidth: 1, borderColor: '#EBEFF5', marginBottom: 20 },
   switchSettingCardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#F4F6F9' },
-  settingCardMainTitle: { fontSize: 14, fontWeight: '500', color: DESIGN.colors.textDark, flex: 1, paddingRight: 10 },
+  settingCardMainTitle: { fontSize: 14, fontWeight: '500', color: DESIGN.colors.dark.text, flex: 1, paddingRight: 10 },
   valueConstantLabel: { fontSize: 13, color: DESIGN.colors.textMuted, fontWeight: '500' },
   metaSecondaryDescLabel: { fontSize: 12, color: DESIGN.colors.textMuted, textAlign: 'right', lineHeight: 16, fontFamily: 'monospace' }
 });
