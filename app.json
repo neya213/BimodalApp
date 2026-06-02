@@ -1,30 +1,32 @@
 {
   "expo": {
     "name": "BimodalApp",
-    "slug": "BimodalApp",
+    "slug": "bimodalapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0E1A"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false,
-      "package": "com.cla2004.BimodalApp"
+  "adaptiveIcon": {
+    "foregroundImage": "./assets/android-icon-foreground.png",
+    "backgroundColor": "#0A0E1A"
+  },
+      "package": "com.cla2004.bimodalapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "e52be4f1-04c1-439f-835f-5ae565572cbd"
+        "projectId": "0a214c65-7303-4e67-a265-cb088007c511"
       }
     }
   }
