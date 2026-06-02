@@ -8,7 +8,6 @@ interface ThreatFeedProps {
 }
 
 export default function ThreatFeedScreen({ onNavigate, isDarkMode = true }: ThreatFeedProps) {
-  // Gracefully check if dark mode active, otherwise fallback gracefully
   const theme = isDarkMode ? DESIGN.colors.dark : DESIGN.colors.light;
 
   const threats = [

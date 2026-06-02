@@ -6,24 +6,24 @@ import BottomTabBar from './src/components/BottomTabBar';
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import UploadVideoScreen from './src/screens/UploadVideoScreen';
+import ThreatFeedScreen from './src/screens/ThreatFeedScreen';
 import MeProfileScreen from './src/screens/ProfileScreen';
 import MeSettingsScreen from './src/screens/SettingsScreen';
 
-// Placeholder fallbacks for un-updated files
+// Fallback stubs for remaining intermediate processing workflows
 const DeepBrainScreen = ({ onNavigate }: any) => <View />;
 const AuthenticScreen = ({ onNavigate }: any) => <View />;
 const DeepfakeScreen = ({ onNavigate }: any) => <View />;
-const ThreatFeedScreen = ({ onNavigate }: any) => <View />;
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<string>('LOGIN');
   const [meSubScreen, setMeSubScreen] = useState<'PROFILE' | 'SETTINGS'>('PROFILE');
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true); // Default to Night mode
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(true); // Default starting configuration
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   const displayNav = currentScreen !== 'LOGIN' && currentScreen !== 'UPLOAD';
-  const lightStatusBar = ['LOGIN', 'UPLOAD'].includes(currentScreen) || isDarkMode;
+  const lightStatusBar = currentScreen === 'LOGIN' || isDarkMode;
 
   const handleNavigation = (screenName: string) => {
     if (screenName === 'ME') {
@@ -36,7 +36,9 @@ export default function App() {
     <SafeAreaView style={[styles.masterContainer, { backgroundColor: isDarkMode ? '#0A0E1A' : '#FFFFFF' }]}>
       <StatusBar barStyle={lightStatusBar ? 'light-content' : 'dark-content'} />
       <View style={styles.windowScreen}>
-        {currentScreen === 'LOGIN' && <LoginScreen onNavigate={handleNavigation} />}
+        {currentScreen === 'LOGIN' && (
+          <LoginScreen onNavigate={handleNavigation} isDarkMode={isDarkMode} />
+        )}
         
         {currentScreen === 'HOME' && (
           <HomeScreen 
@@ -57,7 +59,10 @@ export default function App() {
         {currentScreen === 'DEEP_BRAIN' && <DeepBrainScreen onNavigate={handleNavigation} />}
         {currentScreen === 'AUTHENTIC' && <AuthenticScreen onNavigate={handleNavigation} />}
         {currentScreen === 'DEEPFAKE' && <DeepfakeScreen onNavigate={handleNavigation} />}
-        {currentScreen === 'FEED' && <ThreatFeedScreen onNavigate={handleNavigation} />}
+        
+        {currentScreen === 'FEED' && (
+          <ThreatFeedScreen onNavigate={handleNavigation} isDarkMode={isDarkMode} />
+        )}
         
         {currentScreen === 'ME' && (
           meSubScreen === 'PROFILE' ? (
