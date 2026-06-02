@@ -25,7 +25,7 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
     try {
       setIsSelecting(true);
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['videos'],
+        mediaTypes: ['videos'], // Pulls native platform video views
         allowsEditing: false,
         quality: 1,
       });
@@ -33,6 +33,18 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const videoAsset = result.assets[0];
         const extractedName = videoAsset.uri.split('/').pop() || 'evidence_clip.mp4';
+        
+        // --- STRICT MP4 COMPLIANCE VALIDATION SHIELD ---
+        const fileExtension = extractedName.split('.').pop()?.toLowerCase();
+        if (fileExtension !== 'mp4') {
+          Alert.alert(
+            'Invalid File Format',
+            `Selected format (.${fileExtension || 'unknown'}) is rejected. The Bimodal local inference engine requires explicit structural MPEG-4 (.mp4) container payloads.`,
+            [{ text: 'Acknowledge', style: 'destructive' }]
+          );
+          return; // Terminate execution immediately, preventing file instantiation
+        }
+
         const assetSizeMB = videoAsset.fileSize 
           ? `${(videoAsset.fileSize / (1024 * 1024)).toFixed(1)} MB` 
           : 'Variable Size';
@@ -54,7 +66,6 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
         </TouchableOpacity>
         <Text style={[styles.brandTitleText, { color: theme.text }]}>BIMODAL</Text>
         
-        {/* Syncing the floating theme switcher here too */}
         <TouchableOpacity style={[styles.themeToggle, { backgroundColor: theme.card }]} onPress={toggleTheme}>
           <Text style={styles.toggleIcon}>{isDarkMode ? '☀️ Day' : '🌙 Night'}</Text>
         </TouchableOpacity>
@@ -69,7 +80,7 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
               <>
                 <Text style={styles.uploadIconSymbol}>↑</Text>
                 <Text style={[styles.mainUploadText, { color: theme.text }]}>Open Device Gallery</Text>
-                <Text style={styles.subUploadText}>Select an MP4 to run lip-region screening</Text>
+                <Text style={styles.subUploadText}>Only .mp4 video formats are accepted for execution</Text>
               </>
             )}
           </TouchableOpacity>
@@ -79,7 +90,7 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
             <Text style={[styles.fileNameText, { color: theme.text }]} numberOfLines={1} ellipsizeMode="middle">
               {selectedFile.name}
             </Text>
-            <Text style={styles.fileMetaDetails}>MPEG-4 Video • {selectedFile.size}</Text>
+            <Text style={styles.fileMetaDetails}>MPEG-4 Video (.mp4) • {selectedFile.size}</Text>
             
             <TouchableOpacity style={styles.clearFileLink} onPress={() => setSelectedFile(null)}>
               <Text style={{ color: DESIGN.colors.coral, fontSize: 12 }}>Remove file</Text>
