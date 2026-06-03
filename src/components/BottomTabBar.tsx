@@ -8,18 +8,17 @@ interface BottomTabBarProps {
 }
 
 export default function BottomTabBar({ active, navigation }: BottomTabBarProps) {
-  // Configured with structural Unicode glyphs acting as crisp minimalist icons
   const tabs = [
     { id: 'HOME', label: 'Home', icon: '⌂' },
     { id: 'UPLOAD', label: 'Upload', icon: '⏏' },
-    { id: 'FEED', label: 'Feed', icon: '☲' },
+    { id: 'THREATS', label: 'Feed', icon: '☲' },
     { id: 'ME', label: 'Me', icon: '👤' },
   ];
 
   return (
     <View style={styles.tabContainer}>
       {tabs.map((tab) => {
-        const isCurrent = active === tab.id || (tab.id === 'UPLOAD' && ['DEEP_BRAIN', 'AUTHENTIC', 'DEEPFAKE'].includes(active));
+        const isCurrent = active === tab.id || (tab.id === 'UPLOAD' && ['DEEPBRAIN', 'AUTHENTIC', 'DEEPFAKE'].includes(active));
         return (
           <TouchableOpacity key={tab.id} style={styles.tabButton} onPress={() => navigation(tab.id)}>
             <View style={styles.iconContainer}>

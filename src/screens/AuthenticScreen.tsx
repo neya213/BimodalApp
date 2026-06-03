@@ -1,80 +1,169 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { DESIGN } from '../theme/designSystem';
 
-export default function AuthenticScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
+interface AuthenticScreenProps {
+  onNavigate: (screen: string) => void;
+  routeParams?: { score: number };
+}
+
+export default function AuthenticScreen({ onNavigate, routeParams }: AuthenticScreenProps) {
+  const score = routeParams?.score ?? 0.92;
+
   return (
-    <ScrollView style={styles.page} showsVerticalScrollIndicator={false}>
-      <View style={styles.topHeroBanner}>
-        <View style={styles.headerContext}>
-          <Text style={styles.backLink}>‹ Back</Text>
-          <Text style={styles.bannerLogo}>BIMODAL</Text>
-          <Text style={styles.metaContext}>EDGE ONLY</Text>
+    <View style={styles.container}>
+      <View style={styles.topCard}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => onNavigate('HOME')}>
+            <Text style={styles.backButton}>‹ Back</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>BIMODAL</Text>
+          <Text style={styles.badgeText}>EDGE ONLY</Text>
         </View>
-        <Text style={styles.verdictSubtitle}>• VERDICT</Text>
-        <Text style={styles.verdictTitle}>AUTHENTIC</Text>
-        <Text style={styles.verdictDesc}>Confidence cleared the 0.80 cascade threshold. The clip never left your device.</Text>
+        <Text style={styles.verdictStatus}>● VERDICT</Text>
+        <Text style={styles.mainTitle}>AUTHENTIC</Text>
+        <Text style={styles.description}>Confidence cleared the 0.80 cascade threshold. The clip never left your device.</Text>
       </View>
-
-      <View style={styles.bodyMetrics}>
-        <View style={styles.splitRow}>
-          <View style={styles.splitBlock}>
-            <Text style={styles.metricLabel}>CONFIDENCE</Text>
-            <Text style={styles.metricValue}>0.92</Text>
-            <Text style={styles.metricSub}>OF 1.00</Text>
+      <View style={styles.body}>
+        <View style={styles.statsContainer}>
+          <View style={styles.statBox}>
+            <Text style={styles.statLabel}>CONFIDENCE</Text>
+            <Text style={styles.statNumber}>{score}</Text>
+            <Text style={styles.statSub}>OF 1.00</Text>
           </View>
-          <View style={styles.splitBlock}>
-            <Text style={styles.metricLabel}>ROUND TRIP</Text>
-            <Text style={[styles.metricValue, { color: DESIGN.colors.coral }]}>247<Text style={{ fontSize: 14 }}>ms</Text></Text>
-            <Text style={styles.metricSub}>INSTANT ALERT</Text>
+          <View style={styles.statBox}>
+            <Text style={styles.statLabel}>ROUND TRIP</Text>
+            <Text style={styles.statNumberText}>247 <Text style={styles.msUnit}>ms</Text></Text>
+            <Text style={styles.statSub}>INSTANT ALERT</Text>
           </View>
         </View>
-
-        <Text style={styles.sectionTitle}>SAMPLED FRAMES — 8 OF 8</Text>
-        <View style={styles.frameGrid}>
-          {[1,2,3,4,5,6,7,8].map((i) => <View key={i} style={styles.thumbnailBox} />)}
+        <View style={styles.actionBlock}>
+          <TouchableOpacity style={styles.primaryButton} onPress={() => onNavigate('UPLOAD')}>
+            <Text style={styles.primaryButtonText}>Scan again</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Share verdict</Text>
+          </TouchableOpacity>
         </View>
-
-        <View style={styles.dataRow}><Text style={styles.dataLabel}>Face detection</Text><Text style={styles.dataValue}>38 ms</Text></View>
-        <View style={styles.dataRow}><Text style={styles.dataLabel}>Lip-ROI crop</Text><Text style={styles.dataValue}>4 ms</Text></View>
-        <View style={styles.dataRow}><Text style={styles.dataLabel}>Inference</Text><Text style={styles.dataValue}>76 ms</Text></View>
-
-        <TouchableOpacity style={styles.primaryBtn} onPress={() => onNavigate('DEEPFAKE')}>
-          <Text style={styles.primaryBtnText}>Scan again</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.secondaryBtn} onPress={() => onNavigate('FEED')}>
-          <Text style={styles.secondaryBtnText}>Share verdict</Text>
-        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: DESIGN.colors.bgWhite },
-  topHeroBanner: { backgroundColor: DESIGN.colors.navy, paddingHorizontal: 24, paddingTop: 50, paddingBottom: 30 },
-  headerContext: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 },
-  backLink: { color: '#FFF', fontSize: 13, opacity: 0.7 },
-  bannerLogo: { color: '#FFF', fontSize: 13, fontWeight: '800', letterSpacing: 4 },
-  metaContext: { color: '#FFF', fontSize: 9, fontFamily: 'monospace', opacity: 0.6 },
-  verdictSubtitle: { color: DESIGN.colors.coral, fontSize: 10, fontWeight: '700', letterSpacing: 1, textAlign: 'center' },
-  verdictTitle: { color: '#FFF', fontSize: 34, fontWeight: '800', letterSpacing: 2, textAlign: 'center', marginVertical: 8 },
-  verdictDesc: { color: '#90A3BF', fontSize: 12, textAlign: 'center', lineHeight: 18, paddingHorizontal: 10 },
-  bodyMetrics: { padding: 24 },
-  splitRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 26 },
-  splitBlock: { flex: 1 },
-  metricLabel: { color: DESIGN.colors.textMuted, fontSize: 9, fontWeight: '700', letterSpacing: 0.5 },
-  metricValue: { fontSize: 38, fontWeight: '700', color: DESIGN.colors.textDark, fontFamily: 'monospace', marginTop: 4 },
-  metricSub: { color: DESIGN.colors.textMuted, fontSize: 9, fontWeight: '600', marginTop: 2 },
-  sectionTitle: { color: DESIGN.colors.textMuted, fontSize: 9, fontWeight: '700', letterSpacing: 0.5, marginBottom: 10 },
-  frameGrid: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
-  thumbnailBox: { width: '11%', aspectRatio: 1, backgroundColor: DESIGN.colors.grayFill, borderRadius: 4 },
-  dataRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: DESIGN.colors.borderLight },
-  dataLabel: { fontSize: 14, color: DESIGN.colors.textDark },
-  dataValue: { fontSize: 13, color: DESIGN.colors.textMuted, fontFamily: 'monospace' },
-  primaryBtn: { backgroundColor: DESIGN.colors.navy, paddingVertical: 16, borderRadius: 28, alignItems: 'center', marginTop: 30 },
-  primaryBtnText: { color: '#FFF', fontSize: 15, fontWeight: '700' },
-  secondaryBtn: { paddingVertical: 14, alignItems: 'center', marginTop: 8 },
-  secondaryBtnText: { color: DESIGN.colors.textDark, fontSize: 14, fontWeight: '600' }
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF'
+  },
+  topCard: {
+    backgroundColor: '#1E294B',
+    paddingTop: 60,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 30
+  },
+  backButton: {
+    color: '#FFFFFF',
+    fontSize: 16
+  },
+  headerTitle: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 2
+  },
+  badgeText: {
+    color: '#A5B4FC',
+    fontSize: 10,
+    fontWeight: '600'
+  },
+  verdictStatus: {
+    color: '#34D399',
+    fontSize: 11,
+    fontWeight: '600',
+    marginBottom: 8
+  },
+  mainTitle: {
+    color: '#FFFFFF',
+    fontSize: 36,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 12
+  },
+  description: {
+    color: '#CBD5E1',
+    fontSize: 14,
+    lineHeight: 20
+  },
+  body: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 30,
+    justifyContent: 'space-between',
+    paddingBottom: 40
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  statBox: {
+    flex: 1
+  },
+  statLabel: {
+    fontSize: 11,
+    color: DESIGN.colors.textMuted,
+    fontWeight: '600',
+    letterSpacing: 1,
+    marginBottom: 8
+  },
+  statNumber: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: DESIGN.colors.navy
+  },
+  statNumberText: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: DESIGN.colors.coral
+  },
+  msUnit: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: DESIGN.colors.textMuted
+  },
+  statSub: {
+    fontSize: 10,
+    color: DESIGN.colors.textMuted,
+    marginTop: 4
+  },
+  actionBlock: {
+    gap: 12
+  },
+  primaryButton: {
+    backgroundColor: '#1E294B',
+    paddingVertical: 16,
+    borderRadius: 24,
+    alignItems: 'center'
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  secondaryButton: {
+    paddingVertical: 16,
+    alignItems: 'center'
+  },
+  secondaryButtonText: {
+    color: DESIGN.colors.textMuted,
+    fontSize: 15,
+    fontWeight: '500'
+  }
 });

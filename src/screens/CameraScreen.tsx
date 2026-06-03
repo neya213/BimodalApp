@@ -49,7 +49,7 @@ export default function CameraScreen({ onNavigate }: { onNavigate: (screen: stri
 }
 
 const styles = StyleSheet.create({
-  canvas: { flex: 1, backgroundColor: DESIGN.colors.darkCanvas, paddingHorizontal: 24, paddingTop: 50 },
+  canvas: { flex: 1, backgroundColor: DESIGN.colors.dark.canvas, paddingHorizontal: 24, paddingTop: 50 },
   topLogo: { color: '#FFF', fontSize: 13, fontWeight: '800', letterSpacing: 4, textAlign: 'center' },
   viewfinder: { flex: 1, marginVertical: 30, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', borderRadius: 20 },
   boundingTarget: { width: 140, height: 70, borderWidth: 1.5, borderColor: DESIGN.colors.coral, borderRadius: 4, justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 6 },
