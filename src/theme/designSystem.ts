@@ -5,7 +5,6 @@ export const DESIGN = {
     borderLight: '#EBEFF5',
     textMuted: '#768299',
     
-    // Day Mode Variations
     light: {
       bg: '#FFFFFF',
       canvas: '#F9FAFC',
@@ -14,7 +13,6 @@ export const DESIGN = {
       border: '#EBEFF5',
     },
     
-    // Night Mode Variations
     dark: {
       bg: '#0A0E1A',
       canvas: '#05070F',
@@ -22,5 +20,13 @@ export const DESIGN = {
       text: '#FFFFFF',
       border: '#2D395E',
     }
-  }
+  },
+  
+  theme: (isDarkMode: boolean) => ({
+    bg: isDarkMode ? '#0A0E1A' : '#FFFFFF',
+    canvas: isDarkMode ? '#05070F' : '#F9FAFC',
+    card: isDarkMode ? '#0E1424' : '#F4F6F9',
+    text: isDarkMode ? '#FFFFFF' : '#111111',
+    border: isDarkMode ? '#2D395E' : '#EBEFF5',
+  })
 };

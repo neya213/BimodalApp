@@ -3,131 +3,224 @@ import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert } fr
 import * as ImagePicker from 'expo-image-picker';
 import { DESIGN } from '../theme/designSystem';
 
-interface UploadProps {
+interface UploadVideoScreenProps {
   onNavigate: (screen: string) => void;
   isDarkMode: boolean;
   toggleTheme: () => void;
 }
 
-export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme }: UploadProps) {
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<{ name: string; size?: string } | null>(null);
+export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme }: UploadVideoScreenProps) {
+  const currentTheme = DESIGN.theme(isDarkMode);
+  const [loading, setLoading] = useState(false);
+  const [videoUri, setVideoUri] = useState<string | null>(null);
+  const [videoName, setVideoName] = useState<string | null>(null);
 
-  const theme = isDarkMode ? DESIGN.colors.dark : DESIGN.colors.light;
-
-  const pickVideoFromGallery = async () => {
+  const handlePickVideo = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Bimodal needs access to your gallery.');
+      Alert.alert(
+        'Permission Denied', 
+        'We need access to your gallery to upload videos for deepfake analysis!'
+      );
       return;
     }
 
+    setLoading(true);
     try {
-      setIsSelecting(true);
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['videos'], // Pulls native platform video views
-        allowsEditing: false,
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        allowsEditing: true,
         quality: 1,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const videoAsset = result.assets[0];
-        const extractedName = videoAsset.uri.split('/').pop() || 'evidence_clip.mp4';
-        
-        // --- STRICT MP4 COMPLIANCE VALIDATION SHIELD ---
-        const fileExtension = extractedName.split('.').pop()?.toLowerCase();
-        if (fileExtension !== 'mp4') {
-          Alert.alert(
-            'Invalid File Format',
-            `Selected format (.${fileExtension || 'unknown'}) is rejected. The Bimodal local inference engine requires explicit structural MPEG-4 (.mp4) container payloads.`,
-            [{ text: 'Acknowledge', style: 'destructive' }]
-          );
-          return; // Terminate execution immediately, preventing file instantiation
-        }
-
-        const assetSizeMB = videoAsset.fileSize 
-          ? `${(videoAsset.fileSize / (1024 * 1024)).toFixed(1)} MB` 
-          : 'Variable Size';
-
-        setSelectedFile({ name: extractedName, size: assetSizeMB });
+        const selectedVideo = result.assets[0];
+        setVideoUri(selectedVideo.uri);
+        setVideoName(selectedVideo.fileName || selectedVideo.uri.split('/').pop() || 'video.mp4');
       }
     } catch (error) {
-      Alert.alert('Selection Error', 'Failed to retrieve media file.');
+      console.error('Error picking video:', error);
+      Alert.alert('Error', 'Something went wrong while selecting the video.');
     } finally {
-      setIsSelecting(false);
+      setLoading(false);
     }
   };
 
+  const handleProcessVideo = () => {
+    if (!videoUri) {
+      Alert.alert('No Video Selected', 'Please choose or upload a video container slot first.');
+      return;
+    }
+    // Route directly to your central DeepBrain execution cascade
+    onNavigate('DEEPBRAIN');
+  };
+
   return (
-    <View style={[styles.canvas, { backgroundColor: theme.bg }]}>
-      <View style={styles.topHeader}>
-        <TouchableOpacity onPress={() => onNavigate('HOME')}>
-          <Text style={[styles.backTextButton, { color: theme.text }]}>‹ Cancel</Text>
+    <View style={[styles.container, { backgroundColor: currentTheme.bg }]}>
+      
+      {/* HEADER SECTION WITH BACK BUTTON */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={() => onNavigate('HOME')}>
+          <Text style={styles.backButtonText}>‹ Back</Text>
         </TouchableOpacity>
-        <Text style={[styles.brandTitleText, { color: theme.text }]}>BIMODAL</Text>
-        
-        <TouchableOpacity style={[styles.themeToggle, { backgroundColor: theme.card }]} onPress={toggleTheme}>
-          <Text style={styles.toggleIcon}>{isDarkMode ? '☀️ Day' : '🌙 Night'}</Text>
-        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: currentTheme.text || '#FFFFFF' }]}>UPLOAD MEDIA</Text>
+        <View style={styles.placeholderBlock} />
       </View>
 
-      <View style={styles.uploadBoxContainer}>
-        {!selectedFile ? (
-          <TouchableOpacity style={[styles.dropZoneStyle, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={pickVideoFromGallery} disabled={isSelecting}>
-            {isSelecting ? (
-              <ActivityIndicator size="large" color={DESIGN.colors.coral} />
-            ) : (
-              <>
-                <Text style={styles.uploadIconSymbol}>↑</Text>
-                <Text style={[styles.mainUploadText, { color: theme.text }]}>Open Device Gallery</Text>
-                <Text style={styles.subUploadText}>Only .mp4 video formats are accepted for execution</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        ) : (
-          <View style={[styles.fileSelectedCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={styles.fileIconTag}>🎬</Text>
-            <Text style={[styles.fileNameText, { color: theme.text }]} numberOfLines={1} ellipsizeMode="middle">
-              {selectedFile.name}
+      {/* VIDEO CONTAINER SLOT / DROPZONE */}
+      <TouchableOpacity 
+        style={[
+          styles.videoContainer, 
+          { 
+            backgroundColor: isDarkMode ? '#111827' : '#F3F4F6',
+            borderColor: videoUri ? DESIGN.colors.coral : '#374151',
+            borderStyle: videoUri ? 'solid' : 'dashed'
+          }
+        ]} 
+        onPress={handlePickVideo}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator size="large" color={DESIGN.colors.coral} />
+        ) : videoUri ? (
+          <View style={styles.videoSelectedContent}>
+            <View style={styles.videoIconFrame}>
+              <Text style={styles.videoIcon}>🎬</Text>
+            </View>
+            <Text style={[styles.videoNameText, { color: currentTheme.text || '#FFFFFF' }]} numberOfLines={1}>
+              {videoName}
             </Text>
-            <Text style={styles.fileMetaDetails}>MPEG-4 Video (.mp4) • {selectedFile.size}</Text>
-            
-            <TouchableOpacity style={styles.clearFileLink} onPress={() => setSelectedFile(null)}>
-              <Text style={{ color: DESIGN.colors.coral, fontSize: 12 }}>Remove file</Text>
-            </TouchableOpacity>
+            <Text style={styles.videoSubText}>Tap container slot to replace file</Text>
+          </View>
+        ) : (
+          <View style={styles.videoPlaceholderContent}>
+            <Text style={styles.uploadIcon}>📥</Text>
+            <Text style={[styles.placeholderMainText, { color: currentTheme.text || '#FFFFFF' }]}>
+              Select Video Container
+            </Text>
+            <Text style={styles.placeholderSubText}>Supports MP4, MOV up to 50MB</Text>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
 
-      <View style={{ paddingBottom: 40 }}>
+      {/* FOOTER ACTION BUTTON */}
+      <View style={styles.footer}>
         <TouchableOpacity 
-          style={[styles.primaryActionBtn, { opacity: selectedFile ? 1 : 0.4 }]} 
-          disabled={!selectedFile}
-          onPress={() => onNavigate('DEEP_BRAIN')}
+          style={[styles.processButton, { opacity: videoUri ? 1 : 0.5 }]} 
+          onPress={handleProcessVideo}
+          disabled={!videoUri || loading}
         >
-          <Text style={{ color: '#FFF', fontWeight: '700', fontSize: 15 }}>Initialize Analysis</Text>
+          <Text style={styles.processButtonText}>Analyze via Bimodal Pipeline</Text>
         </TouchableOpacity>
       </View>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  canvas: { flex: 1, paddingHorizontal: 24, paddingTop: 50, justifyContent: 'space-between' },
-  topHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  backTextButton: { fontSize: 14, opacity: 0.8 },
-  brandTitleText: { fontSize: 12, fontWeight: '800', letterSpacing: 4 },
-  themeToggle: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(118,130,153,0.2)' },
-  toggleIcon: { fontSize: 11, fontWeight: '600', color: DESIGN.colors.textMuted },
-  uploadBoxContainer: { flex: 1, justifyContent: 'center', marginVertical: 40 },
-  dropZoneStyle: { borderStyle: 'dashed', borderWidth: 2, borderRadius: 20, height: 260, justifyContent: 'center', alignItems: 'center' },
-  uploadIconSymbol: { color: DESIGN.colors.coral, fontSize: 32, marginBottom: 12, fontWeight: '300' },
-  mainUploadText: { fontSize: 16, fontWeight: '600' },
-  subUploadText: { color: '#768299', fontSize: 12, marginTop: 6, textAlign: 'center', paddingHorizontal: 20 },
-  fileSelectedCard: { borderRadius: 20, padding: 30, alignItems: 'center', borderWidth: 1, width: '100%' },
-  fileIconTag: { fontSize: 40, marginBottom: 14 },
-  fileNameText: { fontSize: 16, fontWeight: '700', textAlign: 'center', paddingHorizontal: 10 },
-  fileMetaDetails: { color: '#768299', fontSize: 12, marginTop: 4 },
-  clearFileLink: { marginTop: 24, padding: 8 },
-  primaryActionBtn: { backgroundColor: DESIGN.colors.coral, paddingVertical: 16, borderRadius: 28, alignItems: 'center' }
+  container: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  backButton: {
+    paddingVertical: 6,
+    paddingRight: 16,
+  },
+  backButtonText: {
+    color: DESIGN.colors.coral,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  headerTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 2,
+    textAlign: 'center',
+  },
+  placeholderBlock: {
+    width: 50, // Matches backButton box balancing perfectly
+  },
+  videoContainer: {
+    flex: 1,
+    borderWidth: 2,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    marginVertical: 20,
+  },
+  videoPlaceholderContent: {
+    alignItems: 'center',
+  },
+  uploadIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  placeholderMainText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 6,
+  },
+  placeholderSubText: {
+    fontSize: 12,
+    color: DESIGN.colors.textMuted,
+  },
+  videoSelectedContent: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  videoIconFrame: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255, 111, 97, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  videoIcon: {
+    fontSize: 32,
+  },
+  videoNameText: {
+    fontSize: 15,
+    fontWeight: '600',
+    textAlign: 'center',
+    paddingHorizontal: 10,
+    marginBottom: 6,
+  },
+  videoSubText: {
+    fontSize: 12,
+    color: DESIGN.colors.coral,
+    fontWeight: '500',
+  },
+  footer: {
+    width: '100%',
+    marginTop: 10,
+  },
+  processButton: {
+    backgroundColor: DESIGN.colors.coral,
+    paddingVertical: 16,
+    borderRadius: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  processButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });

@@ -6,27 +6,32 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0A0E1A"
-    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0A0E1A"
+      }
     },
     "android": {
-  "adaptiveIcon": {
-    "foregroundImage": "./assets/android-icon-foreground.png",
-    "backgroundColor": "#0A0E1A"
-  },
-      "package": "com.cla2004.bimodalapp"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#0A0E1A"
+      },
+      "package": "com.cla2004.bimodalapp",
+      "splash": {
+        "image": "./assets/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0A0E1A"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "0a214c65-7303-4e67-a265-cb088007c511"
+        "projectId": "551ad41c-f053-4fb3-95de-bf4e525c717f"
       }
     }
   }

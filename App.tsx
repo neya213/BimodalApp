@@ -8,7 +8,6 @@ import UploadVideoScreen from './src/screens/UploadVideoScreen';
 import ThreatFeedScreen from './src/screens/ThreatFeedScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
-
 import DeepBrainScreen from './src/screens/DeepBrainScreen';
 import AuthenticScreen from './src/screens/AuthenticScreen';
 import DeepfakeScreen from './src/screens/DeepfakeScreen';
@@ -20,7 +19,7 @@ export default function App() {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  const displayNav = currentScreen !== 'LOGIN' && currentScreen !== 'UPLOAD' && currentScreen !== 'DEEPBRAIN';
+  const displayNav = !['LOGIN', 'UPLOAD', 'DEEPBRAIN', 'AUTHENTIC', 'DEEPFAKE'].includes(currentScreen);
   const lightStatusBar = currentScreen === 'LOGIN' || isDarkMode || currentScreen === 'AUTHENTIC' || currentScreen === 'DEEPFAKE';
 
   const handleNavigation = (screenName: string) => {
@@ -78,7 +77,7 @@ export default function App() {
         )}
 
         {currentScreen === 'ME' && meSubScreen === 'SETTINGS' && (
-          <SettingsScreen onNavigateSub={() => setMeSubScreen('PROFILE')} />
+          <SettingsScreen onNavigateSub={() => setMeSubScreen('PROFILE')} isDarkMode={isDarkMode} />
         )}
       </View>
 
