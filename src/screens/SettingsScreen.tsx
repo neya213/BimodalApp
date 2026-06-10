@@ -1,24 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Switch, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { DESIGN } from '../theme/designSystem';
 
 interface MeSettingsProps {
   onNavigateSub: (target: 'PROFILE' | 'SETTINGS') => void;
   isDarkMode: boolean;
-  apiBaseUrl: string;
-  setApiBaseUrl: (url: string) => void;
-  cloudEnabled: boolean;
-  setCloudEnabled: (enabled: boolean) => void;
 }
 
-export default function MeSettingsScreen({
-  onNavigateSub,
-  isDarkMode,
-  apiBaseUrl,
-  setApiBaseUrl,
-  cloudEnabled,
-  setCloudEnabled,
-}: MeSettingsProps) {
+export default function MeSettingsScreen({ onNavigateSub, isDarkMode }: MeSettingsProps) {
   const [cascadeMode, setCascadeMode] = useState(true);
   const [cellularDeepMode, setCellularDeepMode] = useState(true);
   const [autoFlagMode, setAutoFlagMode] = useState(true);
@@ -71,32 +60,12 @@ export default function MeSettingsScreen({
           </View>
         </View>
 
-        <Text style={styles.settingsInputGroupingTag}>DEEP BRAIN API</Text>
-        <View style={[styles.settingsOptionsCardGrid, { backgroundColor: currentTheme.bg, borderColor: currentTheme.border }]}>
-          <View style={[styles.switchSettingCardRow, { borderBottomColor: currentTheme.border }]}>
-            <Text style={[styles.settingCardMainTitle, { color: currentTheme.text }]}>Use cloud Deep Brain</Text>
-            <Switch value={cloudEnabled} onValueChange={setCloudEnabled} trackColor={{ true: DESIGN.colors.coral, false: '#D1D5DB' }} thumbColor="#FFF" />
-          </View>
-          <View style={[styles.switchSettingCardRow, { borderBottomWidth: 0, flexDirection: 'column', alignItems: 'stretch' }]}>
-            <Text style={[styles.settingCardMainTitle, { color: currentTheme.text, marginBottom: 8 }]}>API base URL</Text>
-            <TextInput
-              style={[styles.apiUrlInput, { color: currentTheme.text, borderColor: currentTheme.border }]}
-              value={apiBaseUrl}
-              onChangeText={setApiBaseUrl}
-              placeholder="https://your-ngrok-or-lan-host"
-              placeholderTextColor={DESIGN.colors.textMuted}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="url"
-            />
-            <Text style={styles.metaSecondaryDescLabel}>
-              {apiBaseUrl ? 'Borderline clips POST here when cloud is on.' : 'Not set — borderline clips use the on-device verdict.'}
-            </Text>
-          </View>
-        </View>
-
         <Text style={styles.settingsInputGroupingTag}>PRIVACY</Text>
         <View style={[styles.settingsOptionsCardGrid, { backgroundColor: currentTheme.bg, borderColor: currentTheme.border }]}>
+          <View style={[styles.switchSettingCardRow, { borderBottomColor: currentTheme.border }]}>
+            <Text style={[styles.settingCardMainTitle, { color: currentTheme.text }]}>Send clips to cloud</Text>
+            <Text style={styles.valueConstantLabel}>Only when uncertain</Text>
+          </View>
           <View style={[styles.switchSettingCardRow, { borderBottomColor: currentTheme.border }]}>
             <Text style={[styles.settingCardMainTitle, { color: currentTheme.text }]}>Local clip retention</Text>
             <Text style={styles.valueConstantLabel}>48 hours</Text>
@@ -142,6 +111,5 @@ const styles = StyleSheet.create({
   switchSettingCardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1 },
   settingCardMainTitle: { fontSize: 14, fontWeight: '500', flex: 1, paddingRight: 10 },
   valueConstantLabel: { fontSize: 13, color: DESIGN.colors.textMuted, fontWeight: '500' },
-  metaSecondaryDescLabel: { fontSize: 12, color: DESIGN.colors.textMuted, textAlign: 'right', lineHeight: 16, fontFamily: 'monospace' },
-  apiUrlInput: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, marginBottom: 8 }
+  metaSecondaryDescLabel: { fontSize: 12, color: DESIGN.colors.textMuted, textAlign: 'right', lineHeight: 16, fontFamily: 'monospace' }
 });

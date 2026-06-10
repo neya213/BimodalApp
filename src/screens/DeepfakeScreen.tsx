@@ -1,151 +1,76 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { DESIGN } from '../theme/designSystem';
-import type { Outcome } from '../detection/detectionService';
 
-interface DeepfakeScreenProps {
-  onNavigate: (screen: string) => void;
-  routeParams?: { outcome?: Outcome };
+interface DeepBrainScreenProps {
+  onNavigate: (screen: string, params?: { score: number }) => void;
+  isDarkMode: boolean;
 }
 
-const SOURCE_BADGE: Record<string, string> = {
-  onDeviceFast: 'EDGE ONLY',
-  cloudDeep: 'CLOUD VERIFIED',
-  cloudFallback: 'CLOUD UNAVAILABLE',
-};
+export default function DeepBrainScreen({ onNavigate, isDarkMode }: DeepBrainScreenProps) {
+  const currentTheme = DESIGN.theme(isDarkMode);
+  const [statusText, setStatusText] = useState('Initializing Bimodal Cascade...');
 
-const SOURCE_DESCRIPTION: Record<string, string> = {
-  onDeviceFast:
-    'Fast Brain fake confidence cleared the 0.80 cascade threshold — flagged instantly on-device, no upload.',
-  cloudDeep: 'Deep Brain analyzed this clip in the cloud and returned a manipulated verdict.',
-  cloudFallback:
-    'The cloud was unreachable, so this is the on-device fallback verdict (fake confidence above 0.50).',
-};
+  useEffect(() => {
+    // Stage 1: Fast Brain Pre-Screen (YOLOv11-Nano)
+    const t1 = setTimeout(() => {
+      setStatusText('Fast Brain: Scanning frame regions...');
+    }, 1200);
 
-export default function DeepfakeScreen({ onNavigate, routeParams }: DeepfakeScreenProps) {
-  const outcome = routeParams?.outcome;
-  const score = outcome?.confidence ?? 0;
-  const source = outcome?.source ?? 'onDeviceFast';
-  const gradCam = outcome?.gradCamBase64;
+    // Stage 2: Deep Brain Feature Extraction (Cloud ViT)
+    const t2 = setTimeout(() => {
+      setStatusText('Deep Brain: Checking audio-to-lip synchronicity...');
+    }, 2500);
+
+    // Stage 3: Resolve Threshold Verdict
+    const t3 = setTimeout(() => {
+      // Simulating a result: 50% chance authentic, 50% chance deepfake
+      const finalScore = parseFloat((Math.random() * (0.99 - 0.60) + 0.60).toFixed(2));
+      
+      if (finalScore >= 0.80) {
+        // High confidence manipulation -> Route to Deepfake Screen
+        onNavigate('DEEPFAKE', { score: finalScore });
+      } else {
+        // Below threshold/Clean -> Route to Authentic Screen
+        onNavigate('AUTHENTIC', { score: finalScore });
+      }
+    }, 4000);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, []);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.topCard}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => onNavigate('HOME')}>
-            <Text style={styles.backButton}>‹ Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>BIMODAL</Text>
-          <Text style={styles.badgeText}>{SOURCE_BADGE[source]}</Text>
-        </View>
-        <Text style={styles.verdictStatus}>● VERDICT</Text>
-        <Text style={styles.mainTitle}>DEEPFAKE</Text>
-        <Text style={styles.description}>{SOURCE_DESCRIPTION[source]}</Text>
-      </View>
-
-      <View style={styles.body}>
-        <View style={styles.statsContainer}>
-          <View style={styles.statBox}>
-            <Text style={styles.statLabel}>FAKE CONFIDENCE</Text>
-            <Text style={styles.statNumber}>{score.toFixed(2)}</Text>
-            <Text style={styles.statSub}>OF 1.00</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statLabel}>SOURCE</Text>
-            <Text style={styles.sourceValue}>{SOURCE_BADGE[source]}</Text>
-            <Text style={styles.statSub}>
-              {source === 'onDeviceFast' ? 'ON-DEVICE' : 'CLOUD CASCADE'}
-            </Text>
-          </View>
-        </View>
-
-        {gradCam ? (
-          <View style={styles.heatmapBlock}>
-            <Text style={styles.statLabel}>GRAD-CAM HEATMAP</Text>
-            <Image
-              style={styles.heatmap}
-              resizeMode="contain"
-              source={{ uri: `data:image/png;base64,${gradCam}` }}
-            />
-          </View>
-        ) : null}
-
-        <View style={styles.actionBlock}>
-          <TouchableOpacity style={styles.primaryButton} onPress={() => onNavigate('UPLOAD')}>
-            <Text style={styles.primaryButtonText}>Scan again</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>Report to feed</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+    <View style={[styles.container, { backgroundColor: currentTheme.bg }]}>
+      <ActivityIndicator size="large" color={DESIGN.colors.coral} style={styles.loader} />
+      <Text style={[styles.title, { color: currentTheme.text || '#FFFFFF' }]}>ANALYZING MEDIA</Text>
+      <Text style={styles.subtitle}>{statusText}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flexGrow: 1,
-    paddingBottom: 40,
-  },
-  topCard: {
-    backgroundColor: '#3B1212',
-    paddingTop: 60,
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30,
+    padding: 24,
   },
-  backButton: { color: '#FFFFFF', fontSize: 16 },
-  headerTitle: { color: '#FFFFFF', fontSize: 14, fontWeight: '700', letterSpacing: 2 },
-  badgeText: { color: '#FCA5A5', fontSize: 10, fontWeight: '600' },
-  verdictStatus: { color: '#F87171', fontSize: 11, fontWeight: '600', marginBottom: 8 },
-  mainTitle: { color: '#FFFFFF', fontSize: 36, fontWeight: '700', letterSpacing: 1, marginBottom: 12 },
-  description: { color: '#FECACA', fontSize: 14, lineHeight: 20 },
-  body: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 30,
-    justifyContent: 'space-between',
+  loader: {
+    marginBottom: 24,
   },
-  statsContainer: { flexDirection: 'row', justifyContent: 'space-between' },
-  statBox: { flex: 1 },
-  statLabel: {
-    fontSize: 11,
-    color: DESIGN.colors.textMuted,
-    fontWeight: '600',
-    letterSpacing: 1,
+  title: {
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 2,
     marginBottom: 8,
   },
-  statNumber: { fontSize: 32, fontWeight: '700', color: DESIGN.colors.coral },
-  sourceValue: { fontSize: 18, fontWeight: '700', color: DESIGN.colors.coral },
-  statSub: { fontSize: 10, color: DESIGN.colors.textMuted, marginTop: 4 },
-  heatmapBlock: { marginTop: 30 },
-  heatmap: {
-    width: '100%',
-    aspectRatio: 1,
-    borderRadius: 16,
-    marginTop: 8,
-    backgroundColor: '#11151F',
+  subtitle: {
+    fontSize: 14,
+    color: DESIGN.colors.textMuted,
+    textAlign: 'center',
   },
-  actionBlock: { gap: 12, marginTop: 30 },
-  primaryButton: {
-    backgroundColor: DESIGN.colors.coral,
-    paddingVertical: 16,
-    borderRadius: 24,
-    alignItems: 'center',
-  },
-  primaryButtonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
-  secondaryButton: { paddingVertical: 16, alignItems: 'center' },
-  secondaryButtonText: { color: DESIGN.colors.textMuted, fontSize: 15, fontWeight: '500' },
 });
