@@ -1,14 +1,31 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { DESIGN } from '../theme/designSystem';
+import type { Outcome } from '../detection/detectionService';
 
 interface AuthenticScreenProps {
   onNavigate: (screen: string) => void;
-  routeParams?: { score: number };
+  routeParams?: { outcome?: Outcome };
 }
 
+const SOURCE_BADGE: Record<string, string> = {
+  onDeviceFast: 'EDGE ONLY',
+  cloudDeep: 'CLOUD VERIFIED',
+  cloudFallback: 'CLOUD UNAVAILABLE',
+};
+
+const SOURCE_DESCRIPTION: Record<string, string> = {
+  onDeviceFast:
+    'Fast Brain fake confidence stayed below the 0.80 cascade threshold. The clip never left your device.',
+  cloudDeep: 'Deep Brain verified this clip in the cloud and returned an authentic verdict.',
+  cloudFallback:
+    'The cloud was unreachable, so this is the on-device fallback verdict (fake confidence below 0.50).',
+};
+
 export default function AuthenticScreen({ onNavigate, routeParams }: AuthenticScreenProps) {
-  const score = routeParams?.score ?? 0.92;
+  const outcome = routeParams?.outcome;
+  const score = outcome?.confidence ?? 0;
+  const source = outcome?.source ?? 'onDeviceFast';
 
   return (
     <View style={styles.container}>
@@ -18,23 +35,25 @@ export default function AuthenticScreen({ onNavigate, routeParams }: AuthenticSc
             <Text style={styles.backButton}>‹ Back</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>BIMODAL</Text>
-          <Text style={styles.badgeText}>EDGE ONLY</Text>
+          <Text style={styles.badgeText}>{SOURCE_BADGE[source]}</Text>
         </View>
         <Text style={styles.verdictStatus}>● VERDICT</Text>
         <Text style={styles.mainTitle}>AUTHENTIC</Text>
-        <Text style={styles.description}>Confidence cleared the 0.80 cascade threshold. The clip never left your device.</Text>
+        <Text style={styles.description}>{SOURCE_DESCRIPTION[source]}</Text>
       </View>
       <View style={styles.body}>
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
-            <Text style={styles.statLabel}>CONFIDENCE</Text>
-            <Text style={styles.statNumber}>{score}</Text>
+            <Text style={styles.statLabel}>FAKE CONFIDENCE</Text>
+            <Text style={styles.statNumber}>{score.toFixed(2)}</Text>
             <Text style={styles.statSub}>OF 1.00</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statLabel}>ROUND TRIP</Text>
-            <Text style={styles.statNumberText}>247 <Text style={styles.msUnit}>ms</Text></Text>
-            <Text style={styles.statSub}>INSTANT ALERT</Text>
+            <Text style={styles.statLabel}>SOURCE</Text>
+            <Text style={styles.sourceValue}>{SOURCE_BADGE[source]}</Text>
+            <Text style={styles.statSub}>
+              {source === 'onDeviceFast' ? 'ON-DEVICE' : 'CLOUD CASCADE'}
+            </Text>
           </View>
         </View>
         <View style={styles.actionBlock}>
@@ -130,6 +149,11 @@ const styles = StyleSheet.create({
   },
   statNumberText: {
     fontSize: 32,
+    fontWeight: '700',
+    color: DESIGN.colors.coral
+  },
+  sourceValue: {
+    fontSize: 18,
     fontWeight: '700',
     color: DESIGN.colors.coral
   },
