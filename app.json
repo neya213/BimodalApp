@@ -39,7 +39,8 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your videos for deepfake analysis."
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "extra": {
       "eas": {

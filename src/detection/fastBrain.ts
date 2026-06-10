@@ -9,6 +9,7 @@
 // So we pass the Float32Array's .buffer and read the output back via Float32Array.
 
 import { loadTensorflowModel, TensorflowModel } from 'react-native-fast-tflite';
+import { Asset } from 'expo-asset';
 import { Buffer } from 'buffer'; // RN has no global Buffer; jpeg-js needs it (§7.1)
 import jpeg from 'jpeg-js';
 import { FastBrain as C } from './constants';
@@ -20,12 +21,22 @@ let model: TensorflowModel | null = null;
 /** Load the bundled model once, before the first analysis (§7.7). Idempotent. */
 export async function loadFastBrain(): Promise<void> {
   if (model) return;
+
+  // Passing require() straight to loadTensorflowModel works in a dev build (Metro
+  // serves the model over http://) but FAILS in a standalone APK: fast-tflite
+  // resolves a protocol-less asset name ("assets_models_fast_brain") and its
+  // native loader throws `MalformedURLException: no protocol`. So resolve the
+  // bundled asset to a real file:// URI with expo-asset and pass { url } instead,
+  // which works in both dev and release.
+  const asset = Asset.fromModule(require('../../assets/models/fast_brain.tflite'));
+  if (!asset.downloaded) {
+    await asset.downloadAsync();
+  }
+  const uri = asset.localUri ?? asset.uri;
+
   // [] = default CPU delegate (best for desktop parity — GPU delegates can shift
   // numbers slightly; revisit only if speed requires it, then re-run §9.3).
-  model = await loadTensorflowModel(
-    require('../../assets/models/fast_brain.tflite'),
-    [],
-  );
+  model = await loadTensorflowModel({ url: uri }, []);
 }
 
 export function isFastBrainLoaded(): boolean {

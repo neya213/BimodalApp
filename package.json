@@ -7,6 +7,7 @@
     "axios": "^1.17.0",
     "buffer": "^6.0.3",
     "expo": "~56.0.9",
+    "expo-asset": "~56.0.16",
     "expo-dev-client": "~56.0.19",
     "expo-file-system": "~56.0.7",
     "expo-image-manipulator": "~56.0.17",
