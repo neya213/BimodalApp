@@ -29,6 +29,15 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      "react-native-fast-tflite",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your videos for deepfake analysis."
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "551ad41c-f053-4fb3-95de-bf4e525c717f"
