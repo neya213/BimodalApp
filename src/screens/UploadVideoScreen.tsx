@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { DESIGN } from '../theme/designSystem';
 
 interface UploadVideoScreenProps {
-  onNavigate: (screen: string) => void;
+  onNavigate: (screen: string, params?: { videoUri?: string; durationMs?: number }) => void;
   isDarkMode: boolean;
   toggleTheme: () => void;
 }
@@ -14,6 +14,7 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
   const [loading, setLoading] = useState(false);
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [videoName, setVideoName] = useState<string | null>(null);
+  const [durationMs, setDurationMs] = useState<number>(0);
 
   const handlePickVideo = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -29,7 +30,7 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
     setLoading(true);
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        mediaTypes: ['videos'],
         allowsEditing: true,
         quality: 1,
       });
@@ -38,6 +39,8 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
         const selectedVideo = result.assets[0];
         setVideoUri(selectedVideo.uri);
         setVideoName(selectedVideo.fileName || selectedVideo.uri.split('/').pop() || 'video.mp4');
+        // Video assets carry `duration` in milliseconds — frame sampling needs it (§7.3).
+        setDurationMs(selectedVideo.duration ?? 0);
       }
     } catch (error) {
       console.error('Error picking video:', error);
@@ -52,8 +55,8 @@ export default function UploadVideoScreen({ onNavigate, isDarkMode, toggleTheme 
       Alert.alert('No Video Selected', 'Please choose or upload a video container slot first.');
       return;
     }
-    // Route directly to your central DeepBrain execution cascade
-    onNavigate('DEEPBRAIN');
+    // Hand the picked clip to the cascade runner (DeepBrainScreen).
+    onNavigate('DEEPBRAIN', { videoUri, durationMs });
   };
 
   return (
