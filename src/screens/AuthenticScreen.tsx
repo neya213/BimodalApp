@@ -56,6 +56,17 @@ export default function AuthenticScreen({ onNavigate, routeParams }: AuthenticSc
             </Text>
           </View>
         </View>
+        {outcome?.debug ? (
+          <View style={styles.debugBox}>
+            <Text selectable style={styles.debugText}>
+              parity build: diag-3{'\n'}
+              clip_fake_confidence: {score.toFixed(3)}{'\n'}
+              faces: {outcome.debug.framesWithFace}/{outcome.debug.framesTotal} · used:{' '}
+              {outcome.debug.framesUsed}/{outcome.debug.framesTotal}{'\n'}
+              per-frame: {outcome.debug.perFrame.map((p) => p.toFixed(2)).join(', ')}
+            </Text>
+          </View>
+        ) : null}
         <View style={styles.actionBlock}>
           <TouchableOpacity style={styles.primaryButton} onPress={() => onNavigate('UPLOAD')}>
             <Text style={styles.primaryButtonText}>Scan again</Text>
@@ -189,5 +200,16 @@ const styles = StyleSheet.create({
     color: DESIGN.colors.textMuted,
     fontSize: 15,
     fontWeight: '500'
+  },
+  debugBox: {
+    backgroundColor: '#0F172A',
+    borderRadius: 10,
+    padding: 12
+  },
+  debugText: {
+    color: '#9CA3AF',
+    fontSize: 12,
+    fontFamily: 'monospace',
+    lineHeight: 18
   }
 });

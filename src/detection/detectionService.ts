@@ -12,6 +12,14 @@ import { analyze } from './fastBrain';
 
 export type Source = 'onDeviceFast' | 'cloudDeep' | 'cloudFallback';
 
+// Diagnostics from the on-device Fast Brain pass (used for the §9.3 parity check).
+export interface DetectionDebug {
+  framesTotal: number;
+  framesUsed: number;
+  framesWithFace: number;
+  perFrame: number[];
+}
+
 export interface Outcome {
   verdict: 'Deepfake' | 'Real' | 'Unknown';
   confidence: number;
@@ -20,6 +28,7 @@ export interface Outcome {
   visualScore?: number;
   syncScore?: number;
   note?: string;
+  debug?: DetectionDebug;
 }
 
 interface DeepBrainResponse {
@@ -69,9 +78,9 @@ export async function runDetection(
   videoUri: string,
   opts: RunOptions,
 ): Promise<Outcome> {
-  const conf = await analyze(videoUri, opts.durationMs);
+  const result = await analyze(videoUri, opts.durationMs);
 
-  if (conf == null) {
+  if (result == null) {
     return {
       verdict: 'Unknown',
       confidence: 0,
@@ -80,9 +89,17 @@ export async function runDetection(
     };
   }
 
+  const conf = result.confidence;
+  const debug: DetectionDebug = {
+    framesTotal: result.framesTotal,
+    framesUsed: result.framesUsed,
+    framesWithFace: result.framesWithFace,
+    perFrame: result.perFrame,
+  };
+
   // Cascade gate (§4.6): a clear fake never touches the network.
   if (conf > C.cascadeThreshold) {
-    return { verdict: 'Deepfake', confidence: conf, source: 'onDeviceFast' };
+    return { verdict: 'Deepfake', confidence: conf, source: 'onDeviceFast', debug };
   }
 
   if (opts.cloudEnabled && opts.apiBaseUrl) {
@@ -95,6 +112,7 @@ export async function runDetection(
         gradCamBase64: r.grad_cam,
         visualScore: r.visual_score,
         syncScore: r.sync_score,
+        debug,
       };
     }
     // Cloud failed — fall back to the on-device verdict (§4.6, §9.1 #5).
@@ -103,6 +121,7 @@ export async function runDetection(
       confidence: conf,
       source: 'cloudFallback',
       note: 'Cloud unavailable — on-device result',
+      debug,
     };
   }
 
@@ -111,5 +130,6 @@ export async function runDetection(
     verdict: conf > C.binaryThreshold ? 'Deepfake' : 'Real',
     confidence: conf,
     source: 'onDeviceFast',
+    debug,
   };
 }

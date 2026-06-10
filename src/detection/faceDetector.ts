@@ -27,8 +27,14 @@ let initPromise: Promise<void> | null = null;
 async function getDetector(): Promise<RNMLKitFaceDetector | null> {
   try {
     if (!detector) {
-      // performanceMode 'fast' mirrors the desktop pipeline's FaceDetectorMode.fast.
-      detector = new RNMLKitFaceDetector({ performanceMode: 'fast' }, true);
+      // 'accurate' catches more (incl. non-frontal/small) faces than 'fast'. On
+      // video thumbnails 'fast' was missing faces on many frames, which forced the
+      // no-face fallback box and dragged the averaged confidence toward the middle
+      // (parity gap vs desktop). minFaceSize lowered so smaller faces still count.
+      detector = new RNMLKitFaceDetector(
+        { performanceMode: 'accurate', minFaceSize: 0.05 },
+        true,
+      );
     }
     if (!initPromise) {
       initPromise = detector.initialize();

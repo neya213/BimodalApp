@@ -6,7 +6,7 @@ import { runDetection, Outcome } from '../detection/detectionService';
 
 // Bump when this file changes so we can confirm on-device that the latest code
 // is running (shows on the loading + error screens).
-const DIAG_BUILD = 'diag-2';
+const DIAG_BUILD = 'diag-3';
 
 interface DeepBrainScreenProps {
   onNavigate: (screen: string, params?: { outcome?: Outcome }) => void;

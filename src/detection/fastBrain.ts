@@ -68,24 +68,43 @@ async function inferOne(base64Jpeg: string): Promise<number> {
   return probs[C.fakeClassIndex];
 }
 
+export interface AnalyzeResult {
+  confidence: number; // mean fake prob over usable frames (clip_fake_confidence)
+  framesTotal: number; // frames extracted from the video
+  framesUsed: number; // frames that produced a usable crop and were averaged
+  framesWithFace: number; // frames where a REAL face was detected (rest = fallback box)
+  perFrame: number[]; // per-frame fake prob, in order
+}
+
 /**
  * Full Fast Brain pass over a video (§4.5). `durationMs` comes from the picker
- * asset (§7.3). Returns mean fake confidence over usable frames, or null if none.
+ * asset (§7.3). Returns the mean fake confidence + diagnostics, or null if no
+ * frame was usable. framesWithFace vs framesUsed reveals how often the no-face
+ * fallback box was used, which is the main driver of parity gaps vs desktop.
  */
 export async function analyze(
   videoUri: string,
   durationMs: number,
-): Promise<number | null> {
+): Promise<AnalyzeResult | null> {
   if (!model) throw new Error('Fast Brain not loaded');
   const frames = await extractFrames(videoUri, durationMs);
 
-  const probs: number[] = [];
+  const perFrame: number[] = [];
+  let framesWithFace = 0;
   for (const frameUri of frames) {
     const crop = await cropLipRoi(frameUri);
     if (!crop) continue; // no usable crop — average over the rest (§4.5)
-    probs.push(await inferOne(crop));
+    if (crop.faceFound) framesWithFace++;
+    perFrame.push(await inferOne(crop.base64));
   }
 
-  if (!probs.length) return null;
-  return probs.reduce((a, b) => a + b, 0) / probs.length;
+  if (!perFrame.length) return null;
+  const confidence = perFrame.reduce((a, b) => a + b, 0) / perFrame.length;
+  return {
+    confidence,
+    framesTotal: frames.length,
+    framesUsed: perFrame.length,
+    framesWithFace,
+    perFrame,
+  };
 }

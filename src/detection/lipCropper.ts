@@ -20,11 +20,18 @@ function getImageSize(uri: string): Promise<{ width: number; height: number }> {
   );
 }
 
-/** Returns the base64 of a 224x224 RGB JPEG lip crop, or null if unusable. */
-export async function cropLipRoi(frameUri: string): Promise<string | null> {
+export interface LipCrop {
+  base64: string;
+  faceFound: boolean; // false => the fixed fallback box was used (§4.2 step 3)
+}
+
+/** Returns a 224x224 RGB JPEG lip crop (base64) + whether a real face was found,
+ *  or null if the frame is unusable. */
+export async function cropLipRoi(frameUri: string): Promise<LipCrop | null> {
   const { width: W, height: H } = await getImageSize(frameUri);
 
   const faces = await detectFaces(frameUri);
+  const faceFound = faces.length > 0;
 
   let fx: number, fy: number, fw: number, fh: number;
   if (!faces.length) {
@@ -76,5 +83,5 @@ export async function cropLipRoi(frameUri: string): Promise<string | null> {
     format: SaveFormat.JPEG,
     base64: true,
   });
-  return result.base64 ?? null;
+  return result.base64 ? { base64: result.base64, faceFound } : null;
 }
